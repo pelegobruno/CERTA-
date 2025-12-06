@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Termos - CERTA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <header class="topo">
+      <h1>Termos - CERTA</h1>
+      <p>Selecione o paciente, o tipo de termo e o período. O texto será gerado automaticamente.</p>
+    </header>
+
+    <main class="grid">
+      <!-- CARD ESQUERDO: FORMULÁRIO -->
+      <section class="card form-card">
+        <div class="form-card-header">
+          <h2>Dados do termo</h2>
+          <p>Preencha as informações abaixo para gerar o documento.</p>
+        </div>
+
+        <!-- BUSCA DE PACIENTE -->
+        <div class="campo campo-busca">
+          <label for="pacienteBusca">Buscar paciente</label>
+          <input
+            id="pacienteBusca"
+            type="text"
+            placeholder="Digite nome do paciente ou responsável..."
+            autocomplete="off"
+          />
+          <ul id="listaPacientes" class="lista-pacientes"></ul>
+        </div>
+
+        <input type="hidden" id="pacienteIndex" value="" />
+
+        <div class="campo">
+          <label for="tipoTermo">Tipo de termo</label>
+          <select id="tipoTermo">
+            <option value="RECESSO">Recesso</option>
+            <option value="FÉRIAS">Férias</option>
+          </select>
+        </div>
+
+        <div class="campo-duplo">
+          <div class="campo campo-data">
+            <label for="dataSaida">Data de saída</label>
+            <input type="date" id="dataSaida" />
+          </div>
+          <div class="campo campo-data">
+            <label for="dataRetorno">Data de retorno</label>
+            <input type="date" id="dataRetorno" />
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="motivo">Motivo</label>
+          <input
+            id="motivo"
+            type="text"
+            placeholder="Ex.: do Feriado entre natal e ano novo vamos viajar"
+          />
+        </div>
+
+        <div class="botoes">
+          <button id="btnAtualizar">Atualizar texto</button>
+          <button id="btnImprimir">Imprimir / Salvar PDF</button>
+        </div>
+      </section>
+
+      <!-- CARD DIREITO: PRÉ-VISUALIZAÇÃO -->
+      <section class="card">
+        <h2>Pré-visualização do termo</h2>
+        <div id="previewTermo" class="preview-box"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
