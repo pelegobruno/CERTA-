@@ -226,3 +226,21 @@ button {
     max-height: none;
   }
 }
+
+
+
+/* font central */
+@font-face {
+  font-family: "Avengeance";
+  src: url("./fonts/avengeance/AVENGEANCE\ HEROIC\ AVENGER\ BI.otf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.topo h1 {
+  text-align: center;
+  margin-bottom: 8px;
+  font-family: "Avengeance", system-ui, sans-serif;
+}
+
+
