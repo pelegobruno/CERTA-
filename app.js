@@ -1,22 +1,33 @@
-// ======== CONFIGURAÇÕES ========
+// ==============================
+//        CONFIGURAÇÕES
+// ==============================
 
 const CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTAp6QKQ_6VwSGvXEIFq9e-ilQWg6M1nX7COeP7c_cUALp2DoNmmGZ99Y2TCimiCNDoXa-3DCDP6J_B/pub?output=csv";
 
 const LOGO_ESQUERDA_URL =
   "https://drive.google.com/thumbnail?id=1DCwjOxTkDmDM8sSnp1iI8PaIBhIZdK0s&sz=w1000";
+
 const LOGO_DIREITA_URL =
   "https://drive.google.com/thumbnail?id=1z1gAJjd0xOzEG-1HzO-3IYcj19DwByj-&sz=w1000";
 
-// índices das colunas no CSV (H, K, L)
-const IDX_RESPONSAVEL = 7;
-const IDX_NOME = 10;
-const IDX_CNS = 11;
+// Agora usando AUTO-DETECÇÃO dos índices corretos no cabeçalho
+let IDX_RESPONSAVEL = null;
+let IDX_NOME = null;
+let IDX_CNS = null;
 
-// ======== TEMPLATE DO TERMO ========
+const HEADER_RESP = "NOME COMPLETO DO RESPONSÁVEL";
+const HEADER_NOME = "NOME";
+const HEADER_CNS = "CNS";
+
+let pacientes = [];
+
+// ==============================
+//      TEMPLATE ORIGINAL
+// ==============================
 
 const TEMPLATE_TERMO = `
-<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; margin-top:40px;">
   <img src="{{LOGO_ESQ}}" style="height:60px; max-width:30%; object-fit:contain;" />
   <div style="text-align:center; font-size:10px; line-height:1.2; opacity:0.75;">
       CENTRO DE REFERÊNCIA DO TRANSTORNO AUTISTA - CERTA<br/>
@@ -26,7 +37,7 @@ const TEMPLATE_TERMO = `
   <img src="{{LOGO_DIR}}" style="height:60px; max-width:30%; object-fit:contain;" />
 </div>
 
-<h2 style="text-align:center; margin-bottom:16px;">{{TITULO_TERMO}}</h2>
+<h2 style="text-align:center; margin-bottom:20px;">{{TITULO_TERMO}}</h2>
 
 <p style="text-align: justify;">
 Eu, <strong>{{NOME_RESPONSAVEL}}</strong>, responsável legal pelo paciente
@@ -48,24 +59,69 @@ ____________________________________<br/>
 </div>
 `;
 
-// ======== FUNÇÕES AUXILIARES ========
+
+// ==============================
+// PARSE CSV PROFISSIONAL (NOVO)
+// ==============================
 
 function detectarSeparador(linha) {
-  return linha.includes(";") ? ";" : ",";
+  if (linha.includes(";")) return ";";
+  return ",";
+}
+
+function parseLinhaCSV(linha, sep) {
+  const resultado = [];
+  let atual = "";
+  let dentroAspas = false;
+
+  for (let i = 0; i < linha.length; i++) {
+    const char = linha[i];
+    const prox = linha[i + 1];
+
+    if (char === '"' && dentroAspas && prox === '"') {
+      atual += '"';
+      i++;
+    } else if (char === '"') {
+      dentroAspas = !dentroAspas;
+    } else if (char === sep && !dentroAspas) {
+      resultado.push(atual.trim());
+      atual = "";
+    } else {
+      atual += char;
+    }
+  }
+
+  resultado.push(atual.trim());
+  return resultado;
 }
 
 function parseCSV(csv) {
   const linhas = csv.trim().split("\n");
   const sep = detectarSeparador(linhas[0]);
-  return linhas.slice(1).map((l) => {
-    const col = l.split(sep).map((c) => c.trim());
+
+  const cabecalho = parseLinhaCSV(linhas[0], sep);
+
+  // AUTO-DETEÇÃO dos índices corretos
+  IDX_RESPONSAVEL = cabecalho.findIndex(c => c.toUpperCase() === HEADER_RESP.toUpperCase());
+  IDX_NOME = cabecalho.findIndex(c => c.toUpperCase() === HEADER_NOME.toUpperCase());
+  IDX_CNS = cabecalho.findIndex(c => c.toUpperCase() === HEADER_CNS.toUpperCase());
+
+  console.log("Índices detectados:", { IDX_RESPONSAVEL, IDX_NOME, IDX_CNS });
+
+  return linhas.slice(1).map(l => {
+    const col = parseLinhaCSV(l, sep);
     return {
       responsavel: col[IDX_RESPONSAVEL] || "",
       nome: col[IDX_NOME] || "",
-      cns: col[IDX_CNS] || "",
+      cns: col[IDX_CNS] || ""
     };
   });
 }
+
+
+// ==============================
+//     FUNÇÕES AUXILIARES
+// ==============================
 
 function formatarDiaMes(data) {
   const [ano, mes, dia] = data.split("-");
@@ -80,17 +136,21 @@ function dataHojeExtenso() {
   });
 }
 
-let pacientes = [];
 
-// ======== CARREGAR PACIENTES ========
+// ==============================
+//     CARREGAR PACIENTES
+// ==============================
 
 async function carregarPacientes() {
-  const resp = await fetch(CSV_URL);
+  const resp = await fetch(CSV_URL, { cache: "no-store" });
   const csv = await resp.text();
   pacientes = parseCSV(csv);
 }
 
-// ======== INICIALIZAÇÃO E FILTRO ========
+
+// ==============================
+//      BUSCA DO PACIENTE
+// ==============================
 
 document.addEventListener("DOMContentLoaded", () => {
   const busca = document.getElementById("pacienteBusca");
@@ -98,6 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const idxInput = document.getElementById("pacienteIndex");
 
   carregarPacientes().then(() => {
+
     busca.addEventListener("input", () => {
       const termo = busca.value.toLowerCase();
       lista.innerHTML = "";
@@ -108,10 +169,9 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const filtrados = pacientes.filter(
-        (p) =>
-          p.nome.toLowerCase().includes(termo) ||
-          p.responsavel.toLowerCase().includes(termo)
+      const filtrados = pacientes.filter(p =>
+        p.nome.toLowerCase().includes(termo) ||
+        p.responsavel.toLowerCase().includes(termo)
       );
 
       if (filtrados.length === 0) {
@@ -138,7 +198,10 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btnImprimir").onclick = imprimirTermo;
 });
 
-// ======== GERAR TERMO ========
+
+// ==============================
+//       GERAR TERMO
+// ==============================
 
 function gerarTermo() {
   const idx = document.getElementById("pacienteIndex").value;
@@ -182,7 +245,10 @@ function gerarTermo() {
   preview.innerHTML = texto;
 }
 
-// ======== IMPRESSÃO (espera logos carregarem) ========
+
+// ==============================
+//          IMPRESSÃO
+// ==============================
 
 function imprimirTermo() {
   const conteudo = document.getElementById("previewTermo").innerHTML;
@@ -196,8 +262,8 @@ function imprimirTermo() {
         <meta charset="utf-8" />
         <title>Termo</title>
         <style>
-          body { font-family: Arial, sans-serif; margin:40px; line-height:1.5; }
-          p { text-align: justify; }
+          body { font-family: Arial, sans-serif; margin:60px; line-height:1.5; }
+          p { text-align: justify; font-size:14px; }
           h2 { text-align:center; }
         </style>
       </head>
@@ -206,30 +272,5 @@ function imprimirTermo() {
   `);
   w.document.close();
 
-  // Espera TODAS as imagens carregarem para garantir que os logos apareçam no PDF
-  w.onload = () => {
-    const imgs = w.document.images;
-    if (!imgs.length) {
-      w.print();
-      return;
-    }
-
-    let carregadas = 0;
-    const tentarImprimir = () => {
-      carregadas++;
-      if (carregadas >= imgs.length) {
-        w.focus();
-        w.print();
-      }
-    };
-
-    for (const img of imgs) {
-      if (img.complete) {
-        tentarImprimir();
-      } else {
-        img.onload = tentarImprimir;
-        img.onerror = tentarImprimir;
-      }
-    }
-  };
+  w.onload = () => w.print();
 }
