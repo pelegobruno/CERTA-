@@ -41,29 +41,41 @@ const TEMPLATE_TERMO = `
 </div>
 
 <!-- CORPO DO TERMO -->
-<div id="corpo-print">
+<div id="corpo-print" style="margin-top: 80px;">
 
-  <h2 style="text-align:center; margin-bottom:20px;">{{TITULO_TERMO}}</h2>
+  <h2 style="
+    text-align: center;
+    margin-bottom: 32px;
+    letter-spacing: 0.5px;
+  ">
+    {{TITULO_TERMO}}
+  </h2>
 
-  <p style="text-align: justify;">
-  Eu, <strong>{{NOME_RESPONSAVEL}}</strong>, responsável legal pelo paciente
-  <strong>{{NOME_FILHO}}</strong>, inscrito no CNS <strong>{{CNS}}</strong>, declaro que,
-  em virtude {{MOTIVO}}, solicito o afastamento do paciente das atividades terapêuticas do CERTA
-  no período de <strong>{{PERIODO}}</strong>, conforme orientação do Serviço Social.
+  <p style="text-align: justify; margin-bottom: 18px;">
+    Eu, <strong>{{NOME_RESPONSAVEL}}</strong>, responsável legal pelo paciente
+    <strong>{{NOME_FILHO}}</strong>, inscrito no CNS sob o nº
+    <strong>{{CNS}}</strong>, declaro que, em virtude de {{MOTIVO}},
+    solicito o afastamento do referido paciente das atividades terapêuticas
+    realizadas no Centro de Referência do Transtorno Autista – CERTA,
+    no período de <strong>{{PERIODO}}</strong>, conforme orientação do Serviço Social.
   </p>
 
-  <p style="text-align: justify;">{{PARAGRAFO_TIPO}}</p>
+  <p style="text-align: justify; margin-bottom: 32px;">
+    {{PARAGRAFO_TIPO}}
+  </p>
 
-  <p style="margin-top: 35px;">Porto Alegre, {{DATA_HOJE_EXTENSO}}.</p>
+  <p style="margin-top: 40px; margin-bottom: 60px;">
+    Porto Alegre, {{DATA_HOJE_EXTENSO}}.
+  </p>
 
-  <br /><br />
-
-  <div style="text-align:center;">
-  ____________________________________<br/>
-  <strong>{{NOME_RESPONSAVEL}}</strong><br/>
-  (Responsável legal por {{NOME_FILHO}})
+  <div style="text-align: center;">
+    ____________________________________<br/>
+    <strong>{{NOME_RESPONSAVEL}}</strong><br/>
+    <span style="font-size: 0.9rem;">
+      Responsável legal por {{NOME_FILHO}}
+    </span>
   </div>
-
+  
 </div>
 `;
 
@@ -300,26 +312,6 @@ function imprimirTermo() {
 
   w.onload = () => w.print();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 async function carregarPacientes() {
