@@ -20,12 +20,14 @@ body {
   margin-bottom: 8px;
 }
 
-.topo p {
-  text-align: center;
-  margin-top: 0;
-  color: #4b5563;
-  font-size: 0.95rem;
+/* Texto do subtítulo do cabeçalho */
+.topo-center p {
+  font-size: 2.25rem;   /* aumenta o texto */
+  font-weight: 600;     /* deixa mais institucional */
+  color: #16416b;       /* mais contraste */
+  margin-top: 0%;
 }
+
 
 .grid {
   display: grid;
@@ -237,29 +239,39 @@ button {
   font-style: normal;
 }
 
-.topo h1 {
+.topo p {
   text-align: center;
   margin-bottom: 8px;
   font-family: "Avengeance", system-ui, sans-serif;
 }
 
+/* Cabeçalho centralizado */
+.topo-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
 
+/* Logos centralizadas */
+.topo-left {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
 
+.topo-left img {
+  height: 100px;
+  object-fit: contain;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* Texto central */
+.topo-center {
+  text-align: center;
+}
 
 /* Input com loader ao lado */
 .input-com-loader {
