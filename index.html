@@ -22,16 +22,28 @@
         </div>
 
         <!-- BUSCA DE PACIENTE -->
-        <div class="campo campo-busca">
-          <label for="pacienteBusca">Buscar paciente</label>
-          <input
-            id="pacienteBusca"
-            type="text"
-            placeholder="Digite nome do paciente ou responsável..."
-            autocomplete="off"
-          />
-          <ul id="listaPacientes" class="lista-pacientes"></ul>
-        </div>
+        <div class="campo campo-busca campo-busca-inline">
+  <label for="pacienteBusca">Buscar paciente</label>
+
+  <div class="input-com-loader">
+    <input
+      id="pacienteBusca"
+      type="text"
+      placeholder="Digite nome do paciente ou responsável..."
+      autocomplete="off"
+    />
+
+    <span id="loadingPacientes" class="puzzle-loader">
+      <span class="piece blue"></span>
+      <span class="piece red"></span>
+      <span class="piece yellow"></span>
+      <span class="piece green"></span>
+    </span>
+  </div>
+
+  <ul id="listaPacientes" class="lista-pacientes"></ul>
+</div>
+
 
         <input type="hidden" id="pacienteIndex" value="" />
 

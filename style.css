@@ -244,3 +244,55 @@ button {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Input com loader ao lado */
+.input-com-loader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Loader quebra-cabeça quadrado */
+.puzzle-loader {
+  display: none;
+  align-items: center;
+  gap: 4px;
+}
+
+.puzzle-loader .piece {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px; /* quadrado */
+  animation: puzzlePulse 1.2s infinite ease-in-out;
+  opacity: 0.9;
+}
+
+/* Cores */
+.piece.blue   { background: #2563eb; animation-delay: 0s; }
+.piece.red    { background: #dc2626; animation-delay: 0.15s; }
+.piece.yellow { background: #facc15; animation-delay: 0.3s; }
+.piece.green  { background: #16a34a; animation-delay: 0.45s; }
+
+/* Animação suave */
+@keyframes puzzlePulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+

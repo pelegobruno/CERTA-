@@ -27,37 +27,46 @@ let pacientes = [];
 // ==============================
 
 const TEMPLATE_TERMO = `
-<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; margin-top:40px;">
+<!-- CABEÇALHO FIXO -->
+<div id="cabecalho-print" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:40px;">
   <img src="{{LOGO_ESQ}}" style="height:60px; max-width:30%; object-fit:contain;" />
+
   <div style="text-align:center; font-size:10px; line-height:1.2; opacity:0.75;">
       CENTRO DE REFERÊNCIA DO TRANSTORNO AUTISTA - CERTA<br/>
       Prefeitura Municipal de Porto Alegre<br/>
       Associação Hospitalar Vila Nova
   </div>
+
   <img src="{{LOGO_DIR}}" style="height:60px; max-width:30%; object-fit:contain;" />
 </div>
 
-<h2 style="text-align:center; margin-bottom:20px;">{{TITULO_TERMO}}</h2>
+<!-- CORPO DO TERMO -->
+<div id="corpo-print">
 
-<p style="text-align: justify;">
-Eu, <strong>{{NOME_RESPONSAVEL}}</strong>, responsável legal pelo paciente
-<strong>{{NOME_FILHO}}</strong>, inscrito no CNS <strong>{{CNS}}</strong>, declaro que,
-em virtude {{MOTIVO}}, solicito o afastamento do paciente das atividades terapêuticas do CERTA
-no período de <strong>{{PERIODO}}</strong>, conforme orientação do Serviço Social.
-</p>
+  <h2 style="text-align:center; margin-bottom:20px;">{{TITULO_TERMO}}</h2>
 
-<p style="text-align: justify;">{{PARAGRAFO_TIPO}}</p>
+  <p style="text-align: justify;">
+  Eu, <strong>{{NOME_RESPONSAVEL}}</strong>, responsável legal pelo paciente
+  <strong>{{NOME_FILHO}}</strong>, inscrito no CNS <strong>{{CNS}}</strong>, declaro que,
+  em virtude {{MOTIVO}}, solicito o afastamento do paciente das atividades terapêuticas do CERTA
+  no período de <strong>{{PERIODO}}</strong>, conforme orientação do Serviço Social.
+  </p>
 
-<p style="margin-top: 35px;">Porto Alegre, {{DATA_HOJE_EXTENSO}}.</p>
+  <p style="text-align: justify;">{{PARAGRAFO_TIPO}}</p>
 
-<br /><br />
+  <p style="margin-top: 35px;">Porto Alegre, {{DATA_HOJE_EXTENSO}}.</p>
 
-<div style="text-align:center;">
-____________________________________<br/>
-<strong>{{NOME_RESPONSAVEL}}</strong><br/>
-(Responsável legal por {{NOME_FILHO}})
+  <br /><br />
+
+  <div style="text-align:center;">
+  ____________________________________<br/>
+  <strong>{{NOME_RESPONSAVEL}}</strong><br/>
+  (Responsável legal por {{NOME_FILHO}})
+  </div>
+
 </div>
 `;
+
 
 
 // ==============================
@@ -262,15 +271,76 @@ function imprimirTermo() {
         <meta charset="utf-8" />
         <title>Termo</title>
         <style>
-          body { font-family: Arial, sans-serif; margin:60px; line-height:1.5; }
+          body {
+            font-family: Arial, sans-serif;
+            margin: 40px 60px;
+            line-height: 1.5;
+          }
+
+          /* Cabeçalho sempre no topo */
+          #cabecalho-print {
+            margin-top: 0;
+          }
+
+          /* Corpo do termo desce na folha */
+          #corpo-print {
+            margin-top: 120px; /* <<< CONTROLE PRINCIPAL */
+          }
+
           p { text-align: justify; font-size:14px; }
           h2 { text-align:center; }
         </style>
       </head>
-      <body>${conteudo}</body>
+      <body>
+        ${conteudo}
+      </body>
     </html>
   `);
   w.document.close();
 
   w.onload = () => w.print();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function carregarPacientes() {
+  const loading = document.getElementById("loadingPacientes");
+  const busca = document.getElementById("pacienteBusca");
+
+  loading.style.display = "flex";
+  busca.disabled = true;
+
+  try {
+    const resp = await fetch(CSV_URL, { cache: "no-store" });
+    const csv = await resp.text();
+    pacientes = parseCSV(csv);
+    pacientesCarregados = true;
+  } catch (e) {
+    console.error("Erro ao carregar pacientes", e);
+    alert("Erro ao carregar a lista de pacientes.");
+  } finally {
+    loading.style.display = "none";
+    busca.disabled = false;
+  }
+}
+
+
