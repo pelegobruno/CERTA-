@@ -6,10 +6,11 @@ const CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTAp6QKQ_6VwSGvXEIFq9e-ilQWg6M1nX7COeP7c_cUALp2DoNmmGZ99Y2TCimiCNDoXa-3DCDP6J_B/pub?output=csv";
 
 const LOGO_ESQUERDA_URL =
-  "https://drive.google.com/thumbnail?id=1DCwjOxTkDmDM8sSnp1iI8PaIBhIZdK0s&sz=w1000";
+  "https://drive.usercontent.google.com/download?id=1YEz4W0iiKHteEJ-D3wXmjJjHxSrwKZAW&authuser=0";
 
 const LOGO_DIREITA_URL =
-  "https://drive.google.com/thumbnail?id=1z1gAJjd0xOzEG-1HzO-3IYcj19DwByj-&sz=w1000";
+  "https://drive.google.com/uc?id=1Klw2UfeNnMTtoMlQVTBXj5YJqJF7fmC2
+";
 
 // Agora usando AUTO-DETECÇÃO dos índices corretos no cabeçalho
 let IDX_RESPONSAVEL = null;
@@ -334,5 +335,6 @@ async function carregarPacientes() {
     busca.disabled = false;
   }
 }
+
 
 
